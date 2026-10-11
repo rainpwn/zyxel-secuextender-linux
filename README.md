@@ -1,5 +1,7 @@
 # zyxel-secuextender-linux
 
+[![Release](https://img.shields.io/github/v/release/rainpwn/zyxel-secuextender-linux)](https://github.com/rainpwn/zyxel-secuextender-linux/releases/latest)
+
 An SSL VPN client for Zyxel firewalls (USG FLEX, ATP and VPN series running ZLD) that runs on Linux. It speaks the same protocol as Zyxel SecuExtender.
 
 ## Why this exists
