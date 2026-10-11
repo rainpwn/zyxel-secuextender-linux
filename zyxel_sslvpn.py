@@ -9,6 +9,8 @@ The protocol is documented in PROTOCOL.md.
 import argparse, getpass, hashlib, os, re, select, shutil, signal, socket, ssl, struct, subprocess, sys, fcntl
 from urllib.parse import quote
 
+__version__ = "0.1.0"
+
 PROXY_PORT = 10444      # hard-coded in SecuExtender (SetConnCTX)
 MTU = 1370              # MTU of the SecuExtender TAP adapter
 IFF_TUN, IFF_NO_PI, TUNSETIFF = 0x0001, 0x1000, 0x400454CA
@@ -152,6 +154,7 @@ def main():
     p.add_argument("--dev", default="zyvpn%d", help="tun interface name")
     p.add_argument("--no-dns", action="store_true", help="ignore the DNS servers pushed by the firewall")
     p.add_argument("-v", "--verbose", action="store_true")
+    p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     a = p.parse_args()
     if os.geteuid() != 0:
         sys.exit("run as root (tun device, routes)")
