@@ -57,7 +57,7 @@ The password is read from the terminal, or from `ZYXEL_VPN_PASSWORD` for scripts
 $ ./secuextender_gui.py
 ```
 
-`secuextender_gui.py` is a Tk window around the client. Run it as your normal user, keeping it next to `zyxel_sslvpn.py`; it starts the client as root through `pkexec`. On every connection it shows the certificate fingerprint and asks you to confirm it.
+`secuextender_gui.py` is a Tk window around the client. Run it as your normal user, keeping it next to `zyxel_sslvpn.py`; it starts the client as root through `pkexec`. On every connection it shows the certificate fingerprint and asks you to confirm it. Once connected you can minimize the window; it comes back if the tunnel drops.
 
 ![Connected, with the client output below the form](screenshots/main.png)
 

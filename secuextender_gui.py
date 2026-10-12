@@ -163,6 +163,7 @@ class App:
         self.icons = {k: self.icon(k) for k in ("connect", "disconnect")}
         self.action = ttk.Button(actions, compound="left", command=self.toggle)
         self.action.pack(side="right")
+        self.minimize = ttk.Button(actions, text="Minimize", command=root.iconify)
         self.spinner = ttk.Progressbar(actions, mode="indeterminate", length=px(90))
 
         # client output
@@ -223,6 +224,10 @@ class App:
         on, off = self.icons[key]
         self.action.configure(text=text, image=(on, "disabled", off), style=bstyle)
         self.action.state(["disabled"] if state == "busy" else ["!disabled"])
+        if state == "connected":  # not every desktop puts a minimize button on the title bar
+            self.minimize.pack(side="right", padx=(0, self.px(8)))
+        else:
+            self.minimize.pack_forget()
         if state == "busy":
             self.spinner.pack(side="right", padx=(0, self.px(12)))
             self.spinner.start(12)
@@ -311,6 +316,7 @@ class App:
             save_servers(self.servers)
         except OSError as e:
             self.write(f"Cannot save {CONFIG}: {e}\n")
+        self.root.title(f"Connected to {server} - {NAME}")  # what the taskbar shows while minimized
 
     def stop(self):
         if not self.stopping:
@@ -319,8 +325,12 @@ class App:
             self.proc.stdin.close()  # the client logs out and exits when its stdin closes
 
     def finished(self, code):
-        was_online, self.proc, self.online, self.stopping = self.online, None, False, False
-        if was_online:
+        was_online, asked, self.proc, self.online, self.stopping = self.online, self.stopping, None, False, False
+        self.root.title(f"{NAME} {__version__}")
+        if was_online and not asked:  # the tunnel dropped while the window may be minimized: show it
+            self.set_state("idle", "Connection lost. The output below says why.", "Error.TLabel")
+            self.root.deiconify()
+        elif was_online:
             self.set_state("idle", "Disconnected")
         elif code in (126, 127) and os.geteuid():
             self.set_state("idle", "Authorization was refused or cancelled.", "Error.TLabel")
