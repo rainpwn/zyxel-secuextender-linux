@@ -9,7 +9,7 @@ The protocol is documented in PROTOCOL.md.
 import argparse, getpass, hashlib, os, re, select, shutil, signal, socket, ssl, struct, subprocess, sys, threading, fcntl
 from urllib.parse import quote
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 PROXY_PORT = 10444      # hard-coded in SecuExtender (SetConnCTX)
 MTU = 1370              # MTU of the SecuExtender TAP adapter
