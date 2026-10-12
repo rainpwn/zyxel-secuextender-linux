@@ -6,7 +6,7 @@ speaking the same protocol as Zyxel SecuExtender 4.x.
 
 The protocol is documented in PROTOCOL.md.
 """
-import argparse, getpass, hashlib, os, re, select, shutil, signal, socket, ssl, struct, subprocess, sys, fcntl
+import argparse, getpass, hashlib, os, re, select, shutil, signal, socket, ssl, struct, subprocess, sys, threading, fcntl
 from urllib.parse import quote
 
 __version__ = "0.1.0"
@@ -153,14 +153,21 @@ def main():
     g.add_argument("--insecure", action="store_true", help="do not check the certificate")
     p.add_argument("--dev", default="zyvpn%d", help="tun interface name")
     p.add_argument("--no-dns", action="store_true", help="ignore the DNS servers pushed by the firewall")
+    p.add_argument("--password-stdin", action="store_true",
+                   help="read the password from the first line of stdin; disconnect when stdin is closed")
     p.add_argument("-v", "--verbose", action="store_true")
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     a = p.parse_args()
     if os.geteuid() != 0:
         sys.exit("run as root (tun device, routes)")
-    password = os.environ.get("ZYXEL_VPN_PASSWORD") or getpass.getpass("Password: ")
+    if a.password_stdin:
+        password = sys.stdin.readline().rstrip("\n")
+    else:
+        password = os.environ.get("ZYXEL_VPN_PASSWORD") or getpass.getpass("Password: ")
     for sig in (signal.SIGINT, signal.SIGTERM):  # kill and systemd stop must log out too
         signal.signal(sig, signal.default_int_handler)
+    if a.password_stdin:  # the GUI runs us as root through pkexec and cannot signal us: it closes stdin instead
+        threading.Thread(target=lambda: (sys.stdin.read(), os.kill(os.getpid(), signal.SIGTERM)), daemon=True).start()
 
     tok = login(a, password)
     print("login ok", file=sys.stderr)

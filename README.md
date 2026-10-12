@@ -6,6 +6,8 @@
 
 An SSL VPN client for Zyxel firewalls (USG FLEX, ATP and VPN series running ZLD) that runs on Linux. It speaks the same protocol as Zyxel SecuExtender.
 
+Tested on an ATP700. See [Status](#status) for details, and [report your firewall](https://github.com/rainpwn/zyxel-secuextender-linux/issues/new?template=device-report.yml) if it is not listed.
+
 ## Why this exists
 
 I work from a Linux workstation, and I manage client networks protected by Zyxel firewalls. Their SSL VPN needs SecuExtender, and SecuExtender has no Linux version. I found no open-source client either, so I reverse engineered SecuExtender and wrote one.
@@ -44,9 +46,39 @@ The client:
 | `--insecure` | Do not check the certificate |
 | `--dev NAME` | Name of the tun interface (default `zyvpn0`) |
 | `--no-dns` | Ignore the DNS servers pushed by the firewall |
+| `--password-stdin` | Read the password from the first line of stdin, disconnect when stdin is closed |
 | `-v` | Print the configuration XML and the first packet received |
 
 The password is read from the terminal, or from `ZYXEL_VPN_PASSWORD` for scripts.
+
+## GUI
+
+```
+$ ./secuextender_gui.py
+```
+
+`secuextender_gui.py` is a Tk window around the client. Run it as your normal user, keeping it next to `zyxel_sslvpn.py`; it starts the client as root through `pkexec`. On every connection it shows the certificate fingerprint and asks you to confirm it.
+
+![Connected, with the client output below the form](screenshots/main.png)
+
+<p>
+  <img src="screenshots/certificate.png" alt="Certificate fingerprint confirmation" width="49%">
+  <img src="screenshots/about.png" alt="About dialog with version and update check" width="49%">
+</p>
+
+Servers that connect successfully are saved, with the username, in `~/SecuExtender.xml`:
+
+```xml
+<?xml version="1.0" standalone="yes"?>
+<SecuExtender>
+  <server>
+    <host>server.hostname:1443</host>
+    <user>kevin</user>
+  </server>
+</SecuExtender>
+```
+
+The password is never saved.
 
 ## Status
 
@@ -57,13 +89,14 @@ The password is read from the terminal, or from `ZYXEL_VPN_PASSWORD` for scripts
 | IPv6 inside the tunnel | Not supported: the firewall pushes IPv4 settings only |
 | Two-factor authentication, client certificates | Not implemented |
 
-If it works or fails on another model, please open an issue with the model, the firmware version and the output of `-v` with addresses redacted.
+If it works or fails on another model, please [open an issue](https://github.com/rainpwn/zyxel-secuextender-linux/issues/new?template=device-report.yml) with the model, the firmware version and the output of `-v` with addresses redacted.
 
 ## Requirements
 
 - Linux with Python 3.8 or later and the `tun` module
 - Root, to create the interface and the routes
 - `iproute2`, and `resolvectl` (systemd-resolved) if you want the pushed DNS servers applied
+- For the GUI: Tk for Python (`python3-tk` on Debian and Ubuntu) and `pkexec` (polkit)
 
 ## How it works
 
