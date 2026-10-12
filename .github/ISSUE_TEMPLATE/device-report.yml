@@ -1,0 +1,57 @@
+name: Device report
+description: The client connected or failed on your Zyxel firewall
+title: "[device] MODEL FIRMWARE: RESULT"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing. Never paste your password, and redact public addresses, hostnames and usernames if you prefer.
+  - type: input
+    id: model
+    attributes:
+      label: Firewall model
+      placeholder: ATP700
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version
+      placeholder: V5.41(ABFA.0)
+    validations:
+      required: true
+  - type: dropdown
+    id: interface
+    attributes:
+      label: Used from
+      options:
+        - zyxel_sslvpn.py (command line)
+        - secuextender_gui.py (graphical interface)
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Connected, traffic works
+        - Connected, but no traffic or missing routes/DNS
+        - Login failed
+        - Other error
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output with `-v`
+      description: >-
+        Run the command line client with `-v` and paste everything it printed. The configuration XML lists the
+        tunnel addresses, routes and DNS servers: redact them if you prefer, but keep the structure.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Linux distribution and Python version
+      placeholder: Debian 12, Python 3.11

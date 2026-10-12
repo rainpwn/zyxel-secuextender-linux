@@ -12,7 +12,7 @@ Tested on an ATP700. See [Status](#status) for details, and [report your firewal
 
 I work from a Linux workstation, and I manage client networks protected by Zyxel firewalls. Their SSL VPN needs SecuExtender, and SecuExtender has no Linux version. I found no open-source client either, so I reverse engineered SecuExtender and wrote one.
 
-`zyxel_sslvpn.py` is a single Python file with no dependencies outside the standard library.
+`zyxel_sslvpn.py` is a single Python file with no dependencies outside the standard library. `secuextender_gui.py` adds a graphical interface on top of it.
 
 ## Usage
 
@@ -51,7 +51,7 @@ The client:
 
 The password is read from the terminal, or from `ZYXEL_VPN_PASSWORD` for scripts.
 
-## GUI
+## Graphical interface
 
 ```
 $ ./secuextender_gui.py
@@ -88,6 +88,7 @@ The password is never saved.
 | Routes and DNS pushed by the firewall | Applied as received; depends on the firewall's SSL VPN settings |
 | IPv6 inside the tunnel | Not supported: the firewall pushes IPv4 settings only |
 | Two-factor authentication, client certificates | Not implemented |
+| `secuextender_gui.py` | New in 0.2.0. Tested on Linux |
 
 If it works or fails on another model, please [open an issue](https://github.com/rainpwn/zyxel-secuextender-linux/issues/new?template=device-report.yml) with the model, the firmware version and the output of `-v` with addresses redacted.
 
@@ -97,6 +98,22 @@ If it works or fails on another model, please [open an issue](https://github.com
 - Root, to create the interface and the routes
 - `iproute2`, and `resolvectl` (systemd-resolved) if you want the pushed DNS servers applied
 - For the GUI: Tk for Python (`python3-tk` on Debian and Ubuntu) and `pkexec` (polkit)
+
+## Install
+
+```
+curl -O https://raw.githubusercontent.com/rainpwn/zyxel-secuextender-linux/main/zyxel_sslvpn.py
+chmod +x zyxel_sslvpn.py
+sudo ./zyxel_sslvpn.py vpn.example.com 443 alice --pin 00
+```
+
+For the graphical interface, download `secuextender_gui.py` next to it as well:
+
+```
+curl -O https://raw.githubusercontent.com/rainpwn/zyxel-secuextender-linux/main/secuextender_gui.py
+chmod +x secuextender_gui.py
+./secuextender_gui.py
+```
 
 ## How it works
 
