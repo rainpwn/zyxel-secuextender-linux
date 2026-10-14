@@ -6,6 +6,8 @@
 
 An SSL VPN client for Zyxel firewalls (USG FLEX, ATP and VPN series running ZLD) that runs on Linux. It speaks the same protocol as Zyxel SecuExtender.
 
+Write-up: [Zyxel ZON and SecuExtender, now on Linux](https://rainpwn.blog/blog/zyxel-tools-on-linux/)
+
 Tested on an ATP700. See [Status](#status) for details, and [report your firewall](https://github.com/rainpwn/zyxel-secuextender-linux/issues/new?template=device-report.yml) if it is not listed.
 
 ## Why this exists
